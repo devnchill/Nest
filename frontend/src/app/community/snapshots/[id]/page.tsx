@@ -22,7 +22,7 @@ const SnapshotDetailsPage: React.FC = () => {
 
   const MAX_RELEASES_TO_SHOW = 9
 
-  const [showAll, setShowAll] = useState(false)
+  const [showAllReleases, setShowAllReleases] = useState(false)
 
   const {
     data,
@@ -35,7 +35,7 @@ const SnapshotDetailsPage: React.FC = () => {
   const snapshot = data?.snapshot
   useEffect(() => {
     if (snapshot?.newReleases && snapshot.newReleases.length <= MAX_RELEASES_TO_SHOW) {
-      setShowAll(true)
+      setShowAllReleases(true)
     }
   }, [snapshot])
 
@@ -132,7 +132,7 @@ const SnapshotDetailsPage: React.FC = () => {
             <button
               className={showButton.classname}
               type="button"
-              onClick={() => setShowAll((p) => !p)}
+              onClick={() => setShowAllReleases((p) => !p)}
             >
               {showButton.label}
             </button>
@@ -231,7 +231,7 @@ const SnapshotDetailsPage: React.FC = () => {
           <h2 className="mb-4 text-2xl font-semibold text-gray-700 dark:text-gray-200">
             New Releases
           </h2>
-          {renderReleases(snapshot.newReleases as unknown as ReleaseType[], showAll)}
+          {renderReleases(snapshot.newReleases as unknown as ReleaseType[], showAllReleases)}
         </div>
       )}
     </div>
