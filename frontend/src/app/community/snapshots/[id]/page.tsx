@@ -1,7 +1,7 @@
 'use client'
 import { useQuery } from '@apollo/client/react'
 import { useRouter, useParams } from 'next/navigation'
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { FaCalendar, FaRightToBracket } from 'react-icons/fa6'
 import { handleAppError, ErrorDisplay } from 'app/global-error'
 import { GetSnapshotDetailsDocument } from 'types/__generated__/snapshotQueries.generated'
@@ -20,6 +20,10 @@ const SnapshotDetailsPage: React.FC = () => {
   const { id: snapshotKey } = useParams<{ id: string }>()
   const router = useRouter()
 
+  const MAX_RELEASES_TO_SHOW = 9
+
+  const [showAll, setShowAll] = useState(false)
+
   const {
     data,
     error: graphQLRequestError,
@@ -29,6 +33,11 @@ const SnapshotDetailsPage: React.FC = () => {
   })
 
   const snapshot = data?.snapshot
+  useEffect(() => {
+    if (snapshot?.newReleases && snapshot.newReleases.length <= MAX_RELEASES_TO_SHOW) {
+      setShowAll(true)
+    }
+  }, [snapshot])
 
   useEffect(() => {
     if (graphQLRequestError) {
@@ -91,6 +100,45 @@ const SnapshotDetailsPage: React.FC = () => {
         title={chapter.name}
         url={`/chapters/${chapter.key}`}
       />
+    )
+  }
+
+  const renderReleases = (releases: ReleaseType[], showAll: boolean) => {
+    const showButton = {
+      label: showAll ? 'show less' : 'show all',
+      classname:
+        'darK:hover:text-white rounded-md border-1 font-light border-blue-400 p-2 text-blue-400 hover:bg-blue-500 hover:text-white',
+    }
+
+    const visibleReleases = showAll ? releases : releases.slice(0, MAX_RELEASES_TO_SHOW)
+    return (
+      <>
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+          {visibleReleases.map((release, index) => {
+            return (
+              <Release
+                key={
+                  release.id || `${release.tagName}-${release.repositoryName ?? 'unknown'}-${index}`
+                }
+                release={release as unknown as ReleaseType}
+                showAvatar={true}
+                index={index}
+              />
+            )
+          })}
+        </div>
+        {releases.length > MAX_RELEASES_TO_SHOW && (
+          <div className="flex w-full justify-center">
+            <button
+              className={showButton.classname}
+              type="button"
+              onClick={() => setShowAll((p) => !p)}
+            >
+              {showButton.label}
+            </button>
+          </div>
+        )}
+      </>
     )
   }
 
@@ -183,21 +231,7 @@ const SnapshotDetailsPage: React.FC = () => {
           <h2 className="mb-4 text-2xl font-semibold text-gray-700 dark:text-gray-200">
             New Releases
           </h2>
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {snapshot.newReleases.map((release, index) => {
-              return (
-                <Release
-                  key={
-                    release.id ||
-                    `${release.tagName}-${release.repositoryName ?? 'unknown'}-${index}`
-                  }
-                  release={release as unknown as ReleaseType}
-                  showAvatar={true}
-                  index={index}
-                />
-              )
-            })}
-          </div>
+          {renderReleases(snapshot.newReleases as unknown as ReleaseType[], showAll)}
         </div>
       )}
     </div>
