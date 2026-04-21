@@ -15,12 +15,11 @@ import Card from 'components/Card'
 import ChapterMapWrapper from 'components/ChapterMapWrapper'
 import LoadingSpinner from 'components/LoadingSpinner'
 import Release from 'components/Release'
+import { MAX_RELEASES_TO_SHOW } from 'utils/constants'
 
 const SnapshotDetailsPage: React.FC = () => {
   const { id: snapshotKey } = useParams<{ id: string }>()
   const router = useRouter()
-
-  const MAX_RELEASES_TO_SHOW = 9
 
   const [showAllReleases, setShowAllReleases] = useState(false)
 
