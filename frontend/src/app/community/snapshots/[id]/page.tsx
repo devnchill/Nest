@@ -105,7 +105,7 @@ const SnapshotDetailsPage: React.FC = () => {
     const showButton = {
       label: showAll ? 'show less' : 'show all',
       classname:
-        'darK:hover:text-white rounded-md border-1 font-light border-blue-400 p-2 text-blue-400 hover:bg-blue-500 hover:text-white',
+        'dark:hover:text-white rounded-md border-1 font-light border-blue-400 p-2 text-blue-400 hover:bg-blue-500 hover:text-white',
     }
 
     const visibleReleases = showAll ? releases : releases.slice(0, MAX_RELEASES_TO_SHOW)
