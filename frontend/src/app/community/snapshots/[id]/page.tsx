@@ -34,9 +34,7 @@ const SnapshotDetailsPage: React.FC = () => {
 
   const snapshot = data?.snapshot
   useEffect(() => {
-    if (snapshot?.newReleases && snapshot.newReleases.length <= MAX_RELEASES_TO_SHOW) {
-      setShowAllReleases(true)
-    }
+    setShowAllReleases(false)
   }, [snapshot])
 
   useEffect(() => {
