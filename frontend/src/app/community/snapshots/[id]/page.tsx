@@ -14,8 +14,7 @@ import { getFilteredIcons, handleSocialUrls } from 'utils/utility'
 import Card from 'components/Card'
 import ChapterMapWrapper from 'components/ChapterMapWrapper'
 import LoadingSpinner from 'components/LoadingSpinner'
-import Release from 'components/Release'
-import { MAX_RELEASES_TO_SHOW } from 'utils/constants'
+import { ReleasesSection } from 'components/SnapshotReleaseSection'
 
 const SnapshotDetailsPage: React.FC = () => {
   const { id: snapshotKey } = useParams<{ id: string }>()
@@ -97,45 +96,6 @@ const SnapshotDetailsPage: React.FC = () => {
         title={chapter.name}
         url={`/chapters/${chapter.key}`}
       />
-    )
-  }
-
-  const renderReleases = (releases: ReleaseType[], showAll: boolean) => {
-    const showButton = {
-      label: showAll ? 'show less' : 'show all',
-      classname:
-        'dark:hover:text-white rounded-md border-1 font-light border-blue-400 p-2 text-blue-400 hover:bg-blue-500 hover:text-white',
-    }
-
-    const visibleReleases = showAll ? releases : releases.slice(0, MAX_RELEASES_TO_SHOW)
-    return (
-      <>
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {visibleReleases.map((release, index) => {
-            return (
-              <Release
-                key={
-                  release.id || `${release.tagName}-${release.repositoryName ?? 'unknown'}-${index}`
-                }
-                release={release as unknown as ReleaseType}
-                showAvatar={true}
-                index={index}
-              />
-            )
-          })}
-        </div>
-        {releases.length > MAX_RELEASES_TO_SHOW && (
-          <div className="flex w-full justify-center">
-            <button
-              className={showButton.classname}
-              type="button"
-              onClick={() => setShowAllReleases((p) => !p)}
-            >
-              {showButton.label}
-            </button>
-          </div>
-        )}
-      </>
     )
   }
 
@@ -228,7 +188,13 @@ const SnapshotDetailsPage: React.FC = () => {
           <h2 className="mb-4 text-2xl font-semibold text-gray-700 dark:text-gray-200">
             New Releases
           </h2>
-          {renderReleases(snapshot.newReleases as unknown as ReleaseType[], showAllReleases)}
+          {
+            <ReleasesSection
+              releases={snapshot.newReleases as ReleaseType[]}
+              showAll={showAllReleases}
+              onToggle={() => setShowAllReleases((p) => !p)}
+            />
+          }
         </div>
       )}
     </div>
